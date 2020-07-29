@@ -1,0 +1,104 @@
+* papers
+  :PROPERTIES:
+  :CREATED:  [2020-07-28 Tue 17:25]
+  :END:
+- https://sci-hub.tw/10.1109/PGEC.1966.264572
+- "Attacking the Busy Beaver 5"
+- https://arxiv.org/pdf/1610.03184.pdf
+
+* turing machine def
+  :PROPERTIES:
+  :CREATED:  [2020-07-28 Tue 17:36]
+  :END:
+
+Definition 1. A Turing machine is a quadruple (Q ∪ {z}, Γ, δ, a) where
+• z is a distinguished state called a halting state
+• Γ is the tape alphabet
+• δ is a partial function from Q × Γ to Q ∪ {z} × Γ × {l, r} called the transition function
+• a ∈ Q is a distinguished state called the start state
+
+transition tuple : *(State, Input, Output, Direction, NewState)*
+
+** conventions
+
+- state state: a
+- end/halt state: z
+- blank symbol: 0
+- n state TM: |Q| == n (n.b. halt state not included)
+
+- We will use ~111{b}011~ to denote a configuration in which the Turing machine is in state ~b~ with the
+  string ~111011~ on the tape and the tape head pointing at the ~0~.
+
+* quintuple vs quadruple machines
+  :PROPERTIES:
+  :CREATED:  [2020-07-28 Tue 17:35]
+  :END:
+
+differ in transition function:
+
+for quintuple:
+- δ is a partial function from Q × Γ to Q ∪ {z} × Γ × {l, r}
+
+for quadruple:
+- δ is a partial function from Q × Γ to Q ∪ {z} × Γ ∪ {l, r}
+
+
+[!!!] we care about the distinction because while they are generally speaking equivalent
+representations, under the constraint of n-state m-symbol machines it's not clear that for every
+quintuple machine there is an equivalent n-state m-symbol quadruple machine.
+
+papers shows that: "Hence any machines relevant for the busy beaver will be found by searching
+amongst the quintuple machines alone."
+
+* rules for pruning "irrelevant" TMs
+  :PROPERTIES:
+  :CREATED:  [2020-07-28 Tue 17:43]
+  :END:
+
+** 1
+we don't care about M that satisfies at least one of following:
+
+- activity(M) is inf (does not terminate)
+- activity(M) <= n (terminates in less than # states, b/c we can trivially add more)
+- productivity(M) == 0 (didnt write any 1's to tape)
+- M does not satisfy the blank tape condition (not sure? Lemma 21)
+
+** 2
+- if contains (a, 0, _, _, a) then activity(M) == inf
+- if contains (a, 0, _, _, z) then activity(M) == 1
+
+==> consider only machines whose first transition is: (a, 0, _, _, b)
+
+** 3
+replacing (a, 0, 0, _, NS) with (a, 0, NOT_0, _, _) and getting a productivity equivalent M'
+
+** 4
+if M contains both: (a, 0, _, r, b) and (b, 0, _, r, S) where S ∈ {a, b}
+
+=> activity(M) = inf
+
+** 5
+(definition of 0-dextrous)
+
+there are n transitions
+~(_, 0, _, _, _)~
+
+and all are of the form
+~(_, 0, _, r, _)~
+
+=> these are irrelevant to bb
+
+* TM normal form
+- contains (a, 0, 1, r, b)
+- contains either a tuple of the form (b, 0, O, l, S) where S ∈ {a, b, c} and O ∈ {0, 1, 2}, or a
+  tuple of the form (b, 0, O, r, c) where O ∈ {0, 1, 2}.
+- not 0-dextrous
+- states are encountered in alphabetic order
+- symbols encoutneres in numerical order (no sure about this, and it's relevant only for m=3)
+- blank tape condition holds
+
+
+** ensure it's maximizing
+any halting transition is of the form (_, _, 1, r, z)
+
+** can't gurantee M to be 1-halting or exhaustive
